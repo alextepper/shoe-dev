@@ -1,0 +1,112 @@
+.layout-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.brand:hover {
+  text-decoration: none;
+}
+
+.brand-mark {
+  width: 42px;
+  height: 42px;
+  display: grid;
+  place-items: center;
+  background: var(--accent);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.brand strong {
+  display: block;
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.brand small {
+  color: var(--muted);
+  font-size: 0.75rem;
+}
+
+.layout-nav {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.layout-nav a {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.layout-nav a:hover {
+  color: var(--accent);
+}
+
+.btn-link {
+  padding: 0.45rem 0.9rem;
+  background: var(--accent);
+  color: #fff !important;
+  border-radius: var(--radius);
+  text-decoration: none !important;
+  font-weight: 600;
+}
+
+.btn-link:hover {
+  background: var(--accent-hover);
+}
+
+.user-pill {
+  font-size: 0.85rem;
+  color: var(--muted);
+  padding: 0.35rem 0.75rem;
+  background: var(--bg);
+  border-radius: 999px;
+}
+
+.layout {
+  flex: 1;
+  min-height: 0;
+  height: 100%;
+  max-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.layout-main {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+}
+
+.layout-main--padded {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 1.5rem;
+  flex: none;
+}

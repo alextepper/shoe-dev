@@ -1,0 +1,42 @@
+.model-sheet-bar {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+  background: #f0f0f0;
+  border-bottom: 1px solid #c5c5c5;
+  flex-shrink: 0;
+}
+
+.model-sheet-bar-title {
+  font-family: "Instrument Serif", Georgia, serif;
+  font-size: 1.15rem;
+}
+
+.model-sheet-bar-meta {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.model-sheet-bar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.model-sheet-bar-add {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.4rem 0.75rem;
+  background: var(--accent);
+  color: #fff !important;
+  border-radius: var(--radius);
+  text-decoration: none !important;
+}
+
+.model-sheet-bar-add:hover {
+  background: var(--accent-hover);
+}

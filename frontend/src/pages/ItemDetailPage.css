@@ -1,0 +1,229 @@
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.detail-header-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+}
+
+.btn-edit {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  background: var(--accent);
+  color: #fff;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.9rem;
+  white-space: nowrap;
+}
+
+.btn-edit:hover {
+  background: var(--accent-hover);
+  text-decoration: none;
+}
+
+.detail-header h1 {
+  font-size: 2rem;
+}
+
+.detail-serial {
+  color: var(--muted);
+  margin: 0;
+}
+
+.detail-thumb {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 800px) {
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.detail-section {
+  padding: 1.25rem;
+}
+
+.detail-section h2 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.detail-fields {
+  display: grid;
+  grid-template-columns: 140px 1fr;
+  gap: 0.5rem 1rem;
+  margin: 0;
+}
+
+.detail-fields dt {
+  color: var(--muted);
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.detail-fields dd {
+  margin: 0;
+}
+
+.custom-field-row {
+  display: contents;
+}
+
+.custom-field-row dd {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.link-btn {
+  background: none;
+  border: none;
+  color: var(--danger);
+  padding: 0 0.25rem;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.add-field-block {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.add-field-block h3 {
+  font-size: 0.95rem;
+  font-family: inherit;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.gallery-item {
+  display: block;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  text-decoration: none;
+  color: inherit;
+}
+
+.gallery-item img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  display: block;
+}
+
+.gallery-item span {
+  display: block;
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
+  background: var(--bg);
+  color: var(--muted);
+}
+
+.upload-block {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.upload-block label {
+  margin-bottom: 0.5rem;
+}
+
+.upload-block button {
+  margin-top: 0.75rem;
+}
+
+.muted {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.comments-section {
+  padding: 1.25rem;
+}
+
+.comment-form textarea {
+  margin-bottom: 0.75rem;
+}
+
+.comment-images-input {
+  margin-bottom: 1rem;
+}
+
+.comment-images-input label {
+  margin-bottom: 0.35rem;
+}
+
+.comments-list {
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.comment {
+  padding: 1rem;
+  background: var(--bg);
+  border-radius: var(--radius);
+}
+
+.comment header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+}
+
+.comment header time {
+  color: var(--muted);
+}
+
+.comment p {
+  margin: 0 0 0.75rem;
+  white-space: pre-wrap;
+}
+
+.comment-images {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.comment-images img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}

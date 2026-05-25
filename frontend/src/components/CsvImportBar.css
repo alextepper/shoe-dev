@@ -1,0 +1,22 @@
+.csv-import-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  padding: 0.5rem 1rem;
+  background: #f0f0f0;
+  border-bottom: 1px solid #c5c5c5;
+  flex-shrink: 0;
+}
+
+.csv-import-ok {
+  font-size: 0.8rem;
+  color: #1a6b2f;
+  font-weight: 600;
+}
+
+.csv-import-err {
+  font-size: 0.8rem;
+  color: var(--danger);
+  max-width: 420px;
+}
