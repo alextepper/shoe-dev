@@ -1,6 +1,9 @@
 import "dotenv/config";
 import express from "express";
 import cors from "cors";
+import path from "path";
+import fs from "fs";
+import { fileURLToPath } from "url";
 import "./db.js";
 import { UPLOADS_DIR } from "./db.js";
 import { initCloudinary, isCloudinaryConfigured } from "./cloudinary.js";
@@ -30,6 +33,20 @@ app.get("/api/health", (_req, res) => {
     imageStorage: cloudinaryReady ? "cloudinary" : "local",
   });
 });
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const frontendDist = path.resolve(__dirname, "../../frontend/dist");
+const frontendIndex = path.join(frontendDist, "index.html");
+
+if (fs.existsSync(frontendIndex)) {
+  app.use(express.static(frontendDist));
+  app.get("*", (req, res, next) => {
+    if (req.path.startsWith("/api") || req.path.startsWith("/uploads")) {
+      return next();
+    }
+    res.sendFile(frontendIndex);
+  });
+}
 
 app.use((err, _req, res, _next) => {
   console.error(err);

@@ -55,6 +55,19 @@ On the main sheet, use **Download CSV template** then **Import CSV** to add many
 - `POST /api/items/:id/images` — multipart `images[]`
 - `POST /api/items/:id/comments` — multipart `body`, optional `images[]`
 
+## Railway deploy
+
+The repo includes `railpack.json` and a root `npm start` script. Railway builds the React app and runs the API on `PORT`, serving the UI from the same service.
+
+**Required variables** (Railway → service → Variables):
+
+- `JWT_SECRET` — long random string
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, `CLOUDINARY_API_SECRET` — recommended for image uploads
+
+**Optional:** mount a volume at `backend/data` so SQLite survives redeploys.
+
+Default login after first deploy (empty DB): `admin` / `admin`
+
 ## Production notes
 
-Set `JWT_SECRET` and Cloudinary variables in the environment. Run `npm run build` in `frontend` and serve `frontend/dist` behind your reverse proxy with API proxy to the backend.
+Set `JWT_SECRET` and Cloudinary variables in the environment. For non-Railway hosts, run `npm run build` then `npm start` at the repo root.
