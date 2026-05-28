@@ -30,6 +30,11 @@ export default function ModelSheetPage() {
   const [saving, setSaving] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [error, setError] = useState("");
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState("");
+  const [historyItem, setHistoryItem] = useState(null);
+  const [versions, setVersions] = useState([]);
 
   const loadSheet = useCallback(() => {
     return api.getModelSheet(decoded).then((data) => {
@@ -115,6 +120,46 @@ export default function ModelSheetPage() {
     }
   };
 
+  const openHistory = async (item) => {
+    if (!item?.id) return;
+    setHistoryItem(item);
+    setHistoryOpen(true);
+    setHistoryLoading(true);
+    setHistoryError("");
+    try {
+      const data = await api.getItemVersions(item.id);
+      setVersions(data.versions ?? []);
+    } catch (e) {
+      setHistoryError(e.message);
+      setVersions([]);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
+  const restoreVersion = async (versionId) => {
+    if (!historyItem?.id) return;
+    if (
+      !window.confirm(
+        "Restore this version? This will overwrite the current row values (a snapshot of the current row will be saved first)."
+      )
+    ) {
+      return;
+    }
+    setHistoryLoading(true);
+    setHistoryError("");
+    try {
+      await api.restoreItemVersion(historyItem.id, versionId);
+      await loadSheet();
+      const data = await api.getItemVersions(historyItem.id);
+      setVersions(data.versions ?? []);
+    } catch (e) {
+      setHistoryError(e.message);
+    } finally {
+      setHistoryLoading(false);
+    }
+  };
+
   if (loading) return <div className="page-loading">Loading sheet…</div>;
 
   return (
@@ -139,6 +184,15 @@ export default function ModelSheetPage() {
               >
                 + Add color
               </Link>
+              <button
+                type="button"
+                className="secondary"
+                onClick={() => openHistory(items[0])}
+                disabled={!items.length}
+                title="Open history for a row by clicking it"
+              >
+                History
+              </button>
               <button
                 type="button"
                 className="danger"
@@ -182,8 +236,54 @@ export default function ModelSheetPage() {
           editMode={editMode}
           onCellChange={updateCell}
           onPhotoChange={updatePhoto}
-          onRowClick={() => {}}
+          onRowClick={(item) => openHistory(item)}
         />
+      )}
+
+      {historyOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="history-modal"
+          onClick={() => setHistoryOpen(false)}
+        >
+          <div className="history-modal-card" onClick={(e) => e.stopPropagation()}>
+            <div className="history-modal-head">
+              <div>
+                <div className="history-title">History</div>
+                <div className="history-sub">
+                  Row: <strong>{historyItem?.sn || "—"}</strong> —{" "}
+                  {historyItem?.title || "—"}
+                </div>
+              </div>
+              <button type="button" className="secondary" onClick={() => setHistoryOpen(false)}>
+                Close
+              </button>
+            </div>
+
+            {historyError && <div className="error-banner">{historyError}</div>}
+
+            {historyLoading ? (
+              <div className="history-loading">Loading…</div>
+            ) : versions.length === 0 ? (
+              <div className="history-empty">No history yet. Make an edit and save to create a version.</div>
+            ) : (
+              <ul className="history-list">
+                {versions.map((v) => (
+                  <li key={v.id} className="history-item">
+                    <div className="history-meta">
+                      <div className="history-date">{v.created_at}</div>
+                      <div className="history-user">{v.username ? `by ${v.username}` : ""}</div>
+                    </div>
+                    <button type="button" onClick={() => restoreVersion(v.id)} disabled={historyLoading}>
+                      Restore
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </div>
       )}
     </div>
   );

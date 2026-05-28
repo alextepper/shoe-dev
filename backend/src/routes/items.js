@@ -15,6 +15,23 @@ import multer from "multer";
 const router = Router();
 router.use(authMiddleware);
 
+function snapshotItemRow(row) {
+  const snap = {
+    model_number: row.model_number ?? null,
+    title: row.title ?? "",
+    main_image: row.main_image ?? null,
+    sn: row.sn ?? null,
+  };
+  for (const k of ITEM_DATA_KEYS) snap[k] = row[k] ?? null;
+  return snap;
+}
+
+function saveVersionSnapshot({ item_id, user_id, snapshot }) {
+  db.prepare(
+    "INSERT INTO item_versions (item_id, user_id, snapshot_json) VALUES (?, ?, ?)"
+  ).run(item_id, user_id ?? null, JSON.stringify(snapshot));
+}
+
 const csvUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 5 * 1024 * 1024 },
@@ -152,6 +169,13 @@ async function updateItemHandler(req, res, next) {
     const row = db.prepare("SELECT * FROM items WHERE id = ?").get(req.params.id);
     if (!row) return res.status(404).json({ error: "Item not found" });
 
+    // Save "before" snapshot for history / rollback.
+    saveVersionSnapshot({
+      item_id: row.id,
+      user_id: req.user?.id,
+      snapshot: snapshotItemRow(row),
+    });
+
     const fields = mergeItemUpdate(row, req.body);
     if (!fields.title?.trim()) {
       return res.status(400).json({ error: "Updated model name is required" });
@@ -199,6 +223,70 @@ router.put("/:id", (req, res, next) => {
     });
   } else {
     updateItemHandler(req, res, next);
+  }
+});
+
+router.get("/:id/versions", (req, res) => {
+  const exists = db.prepare("SELECT id FROM items WHERE id = ?").get(req.params.id);
+  if (!exists) return res.status(404).json({ error: "Item not found" });
+
+  const rows = db
+    .prepare(
+      `SELECT v.id, v.created_at, u.username
+       FROM item_versions v
+       LEFT JOIN users u ON u.id = v.user_id
+       WHERE v.item_id = ?
+       ORDER BY v.created_at DESC, v.id DESC
+       LIMIT 200`
+    )
+    .all(req.params.id);
+  res.json({ versions: rows });
+});
+
+router.post("/:id/restore/:versionId", (req, res, next) => {
+  try {
+    const row = db.prepare("SELECT * FROM items WHERE id = ?").get(req.params.id);
+    if (!row) return res.status(404).json({ error: "Item not found" });
+
+    const v = db
+      .prepare(
+        "SELECT id, snapshot_json FROM item_versions WHERE id = ? AND item_id = ?"
+      )
+      .get(req.params.versionId, row.id);
+    if (!v) return res.status(404).json({ error: "Version not found" });
+
+    // Save current state as a version before restoring.
+    saveVersionSnapshot({
+      item_id: row.id,
+      user_id: req.user?.id,
+      snapshot: snapshotItemRow(row),
+    });
+
+    const snap = JSON.parse(v.snapshot_json);
+    const sets = [
+      "model_number = ?",
+      "title = ?",
+      "main_image = ?",
+      "sn = ?",
+      ...ITEM_DATA_KEYS.map((k) => `${k} = ?`),
+    ];
+    const values = [
+      snap.model_number ?? null,
+      snap.title ?? "",
+      snap.main_image ?? null,
+      snap.sn ?? null,
+      ...ITEM_DATA_KEYS.map((k) => snap[k] ?? null),
+      row.id,
+    ];
+
+    db.prepare(
+      `UPDATE items SET ${sets.join(", ")}, updated_at = datetime('now') WHERE id = ?`
+    ).run(...values);
+
+    const restored = db.prepare("SELECT * FROM items WHERE id = ?").get(row.id);
+    res.json(mapItemRow(restored));
+  } catch (err) {
+    next(err);
   }
 });
 

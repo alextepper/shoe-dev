@@ -58,6 +58,9 @@ export const api = {
     request(`/models/${encodeURIComponent(modelNumber)}`, { method: "DELETE" }),
   getModels: () => request("/models"),
   getItem: (id) => request(`/items/${id}`),
+  getItemVersions: (id) => request(`/items/${id}/versions`),
+  restoreItemVersion: (id, versionId) =>
+    request(`/items/${id}/restore/${versionId}`, { method: "POST" }),
   createItem: (formData) => request("/items", { method: "POST", body: formData }),
   importCsv: (file) => {
     const fd = new FormData();
